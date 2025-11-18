@@ -15,6 +15,7 @@ import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import * as Sensors from 'expo-sensors';
+import { saveDayData, calculateDistance, calculateCalories } from '@/utils/stepData';
 
 const { width } = Dimensions.get('window');
 const CIRCLE_SIZE = width * 0.65;
@@ -190,6 +191,22 @@ export default function Index() {
     }
   }, [steps, dailyGoal, goalReached, progressAnim]);
 
+  // Save step data periodically
+  useEffect(() => {
+    if (!hasPermission || steps === 0) return;
+
+    const saveInterval = setInterval(() => {
+      saveDayData(new Date(), steps, dailyGoal);
+    }, 30000); // Save every 30 seconds
+
+    // Also save when steps change significantly
+    if (steps > 0) {
+      saveDayData(new Date(), steps, dailyGoal);
+    }
+
+    return () => clearInterval(saveInterval);
+  }, [steps, dailyGoal, hasPermission]);
+
   const checkPermissions = async () => {
     try {
       const granted = await AsyncStorage.getItem('steplog_permission_granted');
@@ -266,18 +283,6 @@ export default function Index() {
     }
   };
 
-  const calculateDistance = (stepCount: number): string => {
-    // Average step length is about 0.762 meters
-    const meters = stepCount * 0.762;
-    const miles = meters / 1609.34;
-    return miles.toFixed(1);
-  };
-
-  const calculateCalories = (stepCount: number): string => {
-    // Rough estimate: 0.04 calories per step
-    const calories = stepCount * 0.04;
-    return Math.round(calories).toString();
-  };
 
   if (showPermissionScreen) {
     return (
