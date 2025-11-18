@@ -18,13 +18,22 @@ export default function TabLayout() {
           backgroundColor: '#FFFFFF',
           borderTopWidth: 1,
           borderTopColor: '#E5E7EB',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 88,
+          paddingBottom: 20,
+          paddingTop: 16,
+          shadowColor: 'rgba(0, 0, 0, 0.1)',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+          elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
+          fontSize: 15,
+          fontWeight: '700',
+          marginTop: 6,
+        },
+        tabBarIconStyle: {
+          marginBottom: 2,
         },
       }}
     >
@@ -36,7 +45,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
               color={color}
-              size={24}
+              size={32}
             />
           ),
         }}
@@ -49,7 +58,7 @@ export default function TabLayout() {
             <Ionicons
               name={focused ? 'bar-chart' : 'bar-chart-outline'}
               color={color}
-              size={24}
+              size={32}
             />
           ),
         }}
