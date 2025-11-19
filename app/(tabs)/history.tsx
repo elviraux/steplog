@@ -45,7 +45,7 @@ const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
       <View style={styles.chartContainer}>
         {data.map((day, index) => {
           const barHeight = (day.steps / maxSteps) * CHART_HEIGHT;
-          const barColor = day.goalReached ? COLORS.goldenYellow : COLORS.brightMagenta;
+          const barColor = day.goalReached ? COLORS.goldenYellow : COLORS.textWhite;
 
           return (
             <View key={day.date} style={styles.barContainer}>
