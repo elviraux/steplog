@@ -26,16 +26,17 @@ const CIRCLE_RADIUS = (CIRCLE_SIZE - CIRCLE_STROKE_WIDTH) / 2;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
 const COLORS = {
-  gradientTop: '#0A2463', // Deep Ocean Blue
-  gradientBottom: '#00D9FF', // Vibrant Aqua
-  neonBlue: '#00D9FF', // Neon Blue accent
-  limeGreen: '#CCFF00', // Lime Green success
+  gradientTop: '#2D1B69', // Deep Twilight Purple
+  gradientMiddle: '#E91E8C', // Vibrant Magenta
+  gradientBottom: '#FF6B35', // Warm Fiery Orange
+  electricPink: '#FF10F0', // Electric Pink accent
+  goldenYellow: '#FFD700', // Golden Yellow success
   glassWhite: 'rgba(255, 255, 255, 0.15)', // Frosted glass panel
   glassBorder: 'rgba(255, 255, 255, 0.2)', // Glass border
   textWhite: '#FFFFFF',
   textWhiteShadow: 'rgba(0, 0, 0, 0.3)',
-  glowNeon: 'rgba(0, 217, 255, 0.4)',
-  glowLime: 'rgba(204, 255, 0, 0.4)',
+  glowPink: 'rgba(255, 16, 240, 0.4)',
+  glowYellow: 'rgba(255, 215, 0, 0.4)',
 };
 
 // Confetti component for celebration
@@ -74,7 +75,7 @@ const ConfettiPiece = ({ index }: { index: number }) => {
     ]).start();
   }, [translateY, translateX, rotate, opacity]);
 
-  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F'];
+  const colors = ['#FF10F0', '#FFD700', '#FF6B35', '#E91E8C', '#FF1493', '#FFA500'];
   const color = colors[index % colors.length];
 
   return (
@@ -294,7 +295,8 @@ export default function Index() {
       <View style={styles.permissionContainer}>
         <StatusBar style="light" />
         <ExpoLinearGradient
-          colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+          colors={[COLORS.gradientTop, COLORS.gradientMiddle, COLORS.gradientBottom]}
+          locations={[0, 0.5, 1]}
           style={StyleSheet.absoluteFillObject}
         />
         <BlurView intensity={30} tint="light" style={styles.permissionContent}>
@@ -319,7 +321,7 @@ export default function Index() {
     );
   }
 
-  const progressColor = goalReached ? COLORS.limeGreen : COLORS.neonBlue;
+  const progressColor = goalReached ? COLORS.goldenYellow : COLORS.electricPink;
   const progress = progressAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [CIRCLE_CIRCUMFERENCE, 0],
@@ -331,7 +333,8 @@ export default function Index() {
 
       {/* Gradient Background */}
       <ExpoLinearGradient
-        colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+        colors={[COLORS.gradientTop, COLORS.gradientMiddle, COLORS.gradientBottom]}
+        locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -573,8 +576,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   goalButtonPressed: {
-    backgroundColor: COLORS.glowNeon,
-    shadowColor: COLORS.neonBlue,
+    backgroundColor: COLORS.glowPink,
+    shadowColor: COLORS.electricPink,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 12,
@@ -652,13 +655,13 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   permissionButton: {
-    backgroundColor: COLORS.neonBlue,
+    backgroundColor: COLORS.electricPink,
     paddingVertical: 16,
     paddingHorizontal: 48,
     borderRadius: 12,
   },
   permissionButtonPressed: {
-    shadowColor: COLORS.neonBlue,
+    shadowColor: COLORS.electricPink,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 16,
@@ -724,10 +727,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.glassBorder,
   },
   modalButtonSave: {
-    backgroundColor: COLORS.neonBlue,
+    backgroundColor: COLORS.electricPink,
   },
   modalButtonPressed: {
-    shadowColor: COLORS.neonBlue,
+    shadowColor: COLORS.electricPink,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 12,

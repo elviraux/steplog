@@ -23,16 +23,17 @@ const CHART_HEIGHT = 200;
 const BAR_WIDTH = 32;
 
 const COLORS = {
-  gradientTop: '#0A2463', // Deep Ocean Blue
-  gradientBottom: '#00D9FF', // Vibrant Aqua
-  neonBlue: '#00D9FF', // Neon Blue accent
-  limeGreen: '#CCFF00', // Lime Green success
+  gradientTop: '#2D1B69', // Deep Twilight Purple
+  gradientMiddle: '#E91E8C', // Vibrant Magenta
+  gradientBottom: '#FF6B35', // Warm Fiery Orange
+  electricPink: '#FF10F0', // Electric Pink accent
+  goldenYellow: '#FFD700', // Golden Yellow success
   glassWhite: 'rgba(255, 255, 255, 0.15)', // Frosted glass panel
   glassBorder: 'rgba(255, 255, 255, 0.2)', // Glass border
   textWhite: '#FFFFFF',
   textWhiteShadow: 'rgba(0, 0, 0, 0.3)',
-  glowNeon: 'rgba(0, 217, 255, 0.4)',
-  glowLime: 'rgba(204, 255, 0, 0.4)',
+  glowPink: 'rgba(255, 16, 240, 0.4)',
+  glowYellow: 'rgba(255, 215, 0, 0.4)',
 };
 
 const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
@@ -44,7 +45,7 @@ const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
       <View style={styles.chartContainer}>
         {data.map((day, index) => {
           const barHeight = (day.steps / maxSteps) * CHART_HEIGHT;
-          const barColor = day.goalReached ? COLORS.limeGreen : COLORS.neonBlue;
+          const barColor = day.goalReached ? COLORS.goldenYellow : COLORS.electricPink;
 
           return (
             <View key={day.date} style={styles.barContainer}>
@@ -94,7 +95,7 @@ const HistoryCard = ({ data, onPress }: { data: DayStepData; onPress: () => void
             </View>
             {data.goalReached && (
               <View style={styles.goalBadge}>
-                <Ionicons name="checkmark-circle" size={32} color={COLORS.limeGreen} />
+                <Ionicons name="checkmark-circle" size={32} color={COLORS.goldenYellow} />
               </View>
             )}
           </View>
@@ -158,7 +159,8 @@ export default function History() {
 
       {/* Gradient Background */}
       <LinearGradient
-        colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+        colors={[COLORS.gradientTop, COLORS.gradientMiddle, COLORS.gradientBottom]}
+        locations={[0, 0.5, 1]}
         style={StyleSheet.absoluteFillObject}
       />
 
@@ -319,8 +321,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   historyCardPressed: {
-    backgroundColor: COLORS.glowNeon,
-    shadowColor: COLORS.neonBlue,
+    backgroundColor: COLORS.glowPink,
+    shadowColor: COLORS.electricPink,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 10,
