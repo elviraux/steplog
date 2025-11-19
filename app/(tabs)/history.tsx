@@ -26,7 +26,7 @@ const COLORS = {
   gradientTop: '#2D1B69', // Deep Twilight Purple
   gradientMiddle: '#E91E8C', // Vibrant Magenta
   gradientBottom: '#FF6B35', // Warm Fiery Orange
-  electricPink: '#FF10F0', // Electric Pink accent
+  brightMagenta: '#FF2EDC', // Bright Magenta for unmet goals
   goldenYellow: '#FFD700', // Golden Yellow success
   glassWhite: 'rgba(255, 255, 255, 0.15)', // Frosted glass panel
   glassBorder: 'rgba(255, 255, 255, 0.2)', // Glass border
@@ -45,7 +45,7 @@ const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
       <View style={styles.chartContainer}>
         {data.map((day, index) => {
           const barHeight = (day.steps / maxSteps) * CHART_HEIGHT;
-          const barColor = day.goalReached ? COLORS.goldenYellow : COLORS.electricPink;
+          const barColor = day.goalReached ? COLORS.goldenYellow : COLORS.brightMagenta;
 
           return (
             <View key={day.date} style={styles.barContainer}>
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   },
   historyCardPressed: {
     backgroundColor: COLORS.glowPink,
-    shadowColor: COLORS.electricPink,
+    shadowColor: COLORS.brightMagenta,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.6,
     shadowRadius: 10,
