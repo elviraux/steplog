@@ -15,6 +15,8 @@ import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Circle } from 'react-native-svg';
 import * as Sensors from 'expo-sensors';
+import { BlurView } from 'expo-blur';
+import { LinearGradient as ExpoLinearGradient } from 'expo-linear-gradient';
 import { saveDayData, calculateDistance, calculateCalories } from '@/utils/stepData';
 
 const { width } = Dimensions.get('window');
@@ -24,13 +26,16 @@ const CIRCLE_RADIUS = (CIRCLE_SIZE - CIRCLE_STROKE_WIDTH) / 2;
 const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
 
 const COLORS = {
-  background: '#F0F0F0',
-  cardBackground: '#FFFFFF',
-  primaryBlue: '#3B82F6',
-  successGreen: '#10B981',
-  textPrimary: '#1F2937',
-  textSecondary: '#6B7280',
-  shadow: 'rgba(0, 0, 0, 0.1)',
+  gradientTop: '#0A2463', // Deep Ocean Blue
+  gradientBottom: '#00D9FF', // Vibrant Aqua
+  neonBlue: '#00D9FF', // Neon Blue accent
+  limeGreen: '#CCFF00', // Lime Green success
+  glassWhite: 'rgba(255, 255, 255, 0.15)', // Frosted glass panel
+  glassBorder: 'rgba(255, 255, 255, 0.2)', // Glass border
+  textWhite: '#FFFFFF',
+  textWhiteShadow: 'rgba(0, 0, 0, 0.3)',
+  glowNeon: 'rgba(0, 217, 255, 0.4)',
+  glowLime: 'rgba(204, 255, 0, 0.4)',
 };
 
 // Confetti component for celebration
@@ -287,8 +292,12 @@ export default function Index() {
   if (showPermissionScreen) {
     return (
       <View style={styles.permissionContainer}>
-        <StatusBar style="dark" />
-        <View style={styles.permissionContent}>
+        <StatusBar style="light" />
+        <ExpoLinearGradient
+          colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <BlurView intensity={30} tint="light" style={styles.permissionContent}>
           <Text style={styles.permissionTitle}>Welcome to Steplog</Text>
           <Text style={styles.permissionDescription}>
             To count your steps, we need permission to access your motion and fitness data.
@@ -305,12 +314,12 @@ export default function Index() {
           >
             <Text style={styles.permissionButtonText}>Grant Permission</Text>
           </Pressable>
-        </View>
+        </BlurView>
       </View>
     );
   }
 
-  const progressColor = goalReached ? COLORS.successGreen : COLORS.primaryBlue;
+  const progressColor = goalReached ? COLORS.limeGreen : COLORS.neonBlue;
   const progress = progressAnim.interpolate({
     inputRange: [0, 1],
     outputRange: [CIRCLE_CIRCUMFERENCE, 0],
@@ -318,7 +327,13 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
+
+      {/* Gradient Background */}
+      <ExpoLinearGradient
+        colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+        style={StyleSheet.absoluteFillObject}
+      />
 
       {showConfetti && <Confetti />}
 
@@ -328,8 +343,8 @@ export default function Index() {
           <Text style={styles.headerTitle}>Today&apos;s Steps</Text>
         </View>
 
-        {/* Main Card */}
-        <View style={styles.card}>
+        {/* Main Card - Frosted Glass */}
+        <BlurView intensity={30} tint="light" style={styles.card}>
           {/* Progress Circle */}
           <View style={styles.circleContainer}>
             <Svg width={CIRCLE_SIZE} height={CIRCLE_SIZE}>
@@ -338,7 +353,7 @@ export default function Index() {
                 cx={CIRCLE_SIZE / 2}
                 cy={CIRCLE_SIZE / 2}
                 r={CIRCLE_RADIUS}
-                stroke="#E5E7EB"
+                stroke="rgba(255, 255, 255, 0.2)"
                 strokeWidth={CIRCLE_STROKE_WIDTH}
                 fill="none"
               />
@@ -364,19 +379,6 @@ export default function Index() {
             </View>
           </View>
 
-          {/* Stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{calculateDistance(steps)} mi</Text>
-              <Text style={styles.statLabel}>Distance</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.statItem}>
-              <Text style={styles.statValue}>{calculateCalories(steps)} kcal</Text>
-              <Text style={styles.statLabel}>Calories</Text>
-            </View>
-          </View>
-
           {/* Goal Button */}
           <Pressable
             style={({ pressed }) => [
@@ -387,13 +389,25 @@ export default function Index() {
           >
             <Text style={styles.goalButtonText}>Edit Goal</Text>
           </Pressable>
+        </BlurView>
+
+        {/* Stats Cards - Separated Frosted Glass */}
+        <View style={styles.statsRow}>
+          <BlurView intensity={30} tint="light" style={styles.statCard}>
+            <Text style={styles.statValue}>{calculateDistance(steps)} mi</Text>
+            <Text style={styles.statLabel}>Distance</Text>
+          </BlurView>
+          <BlurView intensity={30} tint="light" style={styles.statCard}>
+            <Text style={styles.statValue}>{calculateCalories(steps)} kcal</Text>
+            <Text style={styles.statLabel}>Calories Burned</Text>
+          </BlurView>
         </View>
 
         {/* Goal Reached Message */}
         {goalReached && (
-          <View style={styles.successBanner}>
+          <BlurView intensity={30} tint="light" style={styles.successBanner}>
             <Text style={styles.successText}>🎉 Goal Reached! Great job!</Text>
-          </View>
+          </BlurView>
         )}
       </View>
 
@@ -404,11 +418,12 @@ export default function Index() {
         animationType="fade"
         onRequestClose={() => setShowGoalModal(false)}
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setShowGoalModal(false)}
-        >
-          <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
+        <View style={styles.modalOverlay}>
+          <Pressable
+            style={StyleSheet.absoluteFillObject}
+            onPress={() => setShowGoalModal(false)}
+          />
+          <BlurView intensity={30} tint="light" style={styles.modalContent}>
             <Text style={styles.modalTitle}>Set Daily Goal</Text>
             <TextInput
               style={styles.modalInput}
@@ -416,7 +431,7 @@ export default function Index() {
               onChangeText={setGoalInput}
               keyboardType="number-pad"
               placeholder="Enter step goal"
-              placeholderTextColor={COLORS.textSecondary}
+              placeholderTextColor="rgba(255, 255, 255, 0.5)"
               selectTextOnFocus
             />
             <View style={styles.modalButtons}>
@@ -444,8 +459,8 @@ export default function Index() {
                 <Text style={styles.modalButtonTextSave}>Save</Text>
               </Pressable>
             </View>
-          </Pressable>
-        </Pressable>
+          </BlurView>
+        </View>
       </Modal>
     </View>
   );
@@ -457,7 +472,6 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   content: {
     flex: 1,
@@ -470,18 +484,19 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   card: {
-    backgroundColor: COLORS.cardBackground,
-    borderRadius: 24,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 28,
     padding: 30,
     alignItems: 'center',
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   circleContainer: {
     position: 'relative',
@@ -496,77 +511,102 @@ const styles = StyleSheet.create({
   stepCount: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   stepLabel: {
     fontSize: 16,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 4,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   goalText: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 8,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  statsContainer: {
+  statsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: 20,
+    gap: 16,
+    marginTop: 20,
   },
-  statItem: {
+  statCard: {
     flex: 1,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 20,
+    padding: 20,
     alignItems: 'center',
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: '#E5E7EB',
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   statLabel: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 4,
+    textAlign: 'center',
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   goalButton: {
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: COLORS.primaryBlue,
+    borderColor: COLORS.textWhite,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   goalButtonPressed: {
-    opacity: 0.7,
+    backgroundColor: COLORS.glowNeon,
+    shadowColor: COLORS.neonBlue,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
   },
   goalButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.primaryBlue,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   successBanner: {
     marginTop: 20,
-    backgroundColor: COLORS.successGreen,
-    borderRadius: 16,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 20,
     padding: 16,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   successText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   permissionContainer: {
     flex: 1,
-    backgroundColor: COLORS.cardBackground,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 30,
@@ -574,69 +614,97 @@ const styles = StyleSheet.create({
   permissionContent: {
     alignItems: 'center',
     maxWidth: 400,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 28,
+    padding: 40,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   permissionTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 20,
     textAlign: 'center',
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   permissionDescription: {
     fontSize: 18,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     textAlign: 'center',
     marginBottom: 12,
     lineHeight: 26,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   permissionNote: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     textAlign: 'center',
     marginBottom: 40,
     lineHeight: 20,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   permissionButton: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.neonBlue,
     paddingVertical: 16,
     paddingHorizontal: 48,
     borderRadius: 12,
   },
   permissionButtonPressed: {
-    opacity: 0.8,
+    shadowColor: COLORS.neonBlue,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 16,
   },
   permissionButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: COLORS.cardBackground,
-    borderRadius: 20,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 24,
     padding: 24,
     width: '80%',
     maxWidth: 400,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 20,
     textAlign: 'center',
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   modalInput: {
     borderWidth: 2,
-    borderColor: COLORS.primaryBlue,
+    borderColor: COLORS.textWhite,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
     padding: 16,
     fontSize: 18,
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 20,
     textAlign: 'center',
   },
@@ -651,23 +719,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalButtonCancel: {
-    backgroundColor: '#E5E7EB',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
   },
   modalButtonSave: {
-    backgroundColor: COLORS.primaryBlue,
+    backgroundColor: COLORS.neonBlue,
   },
   modalButtonPressed: {
-    opacity: 0.7,
+    shadowColor: COLORS.neonBlue,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 12,
   },
   modalButtonTextCancel: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
   },
   modalButtonTextSave: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: COLORS.textWhite,
   },
   confettiContainer: {
     position: 'absolute',

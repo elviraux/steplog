@@ -8,6 +8,8 @@ import {
   RefreshControl,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   DayStepData,
@@ -21,26 +23,28 @@ const CHART_HEIGHT = 200;
 const BAR_WIDTH = 32;
 
 const COLORS = {
-  background: '#F0F0F0',
-  cardBackground: '#FFFFFF',
-  primaryBlue: '#3B82F6',
-  successGreen: '#10B981',
-  textPrimary: '#1F2937',
-  textSecondary: '#6B7280',
-  shadow: 'rgba(0, 0, 0, 0.1)',
-  border: '#E5E7EB',
+  gradientTop: '#0A2463', // Deep Ocean Blue
+  gradientBottom: '#00D9FF', // Vibrant Aqua
+  neonBlue: '#00D9FF', // Neon Blue accent
+  limeGreen: '#CCFF00', // Lime Green success
+  glassWhite: 'rgba(255, 255, 255, 0.15)', // Frosted glass panel
+  glassBorder: 'rgba(255, 255, 255, 0.2)', // Glass border
+  textWhite: '#FFFFFF',
+  textWhiteShadow: 'rgba(0, 0, 0, 0.3)',
+  glowNeon: 'rgba(0, 217, 255, 0.4)',
+  glowLime: 'rgba(204, 255, 0, 0.4)',
 };
 
 const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
   const maxSteps = Math.max(...data.map(d => d.steps), 10000);
 
   return (
-    <View style={styles.chartCard}>
+    <BlurView intensity={30} tint="light" style={styles.chartCard}>
       <Text style={styles.chartTitle}>Last 7 Days</Text>
       <View style={styles.chartContainer}>
         {data.map((day, index) => {
           const barHeight = (day.steps / maxSteps) * CHART_HEIGHT;
-          const barColor = day.goalReached ? COLORS.successGreen : COLORS.primaryBlue;
+          const barColor = day.goalReached ? COLORS.limeGreen : COLORS.neonBlue;
 
           return (
             <View key={day.date} style={styles.barContainer}>
@@ -65,48 +69,53 @@ const WeeklyChart = ({ data }: { data: DayStepData[] }) => {
           );
         })}
       </View>
-    </View>
+    </BlurView>
   );
 };
 
 const HistoryCard = ({ data, onPress }: { data: DayStepData; onPress: () => void }) => {
   return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.historyCard,
-        pressed && styles.historyCardPressed,
-      ]}
-      onPress={onPress}
-    >
-      <View style={styles.historyCardHeader}>
-        <View>
-          <Text style={styles.historyDate}>{formatDate(data.date)}</Text>
-          <Text style={styles.historySteps}>
-            {data.steps.toLocaleString()} steps
-          </Text>
-        </View>
-        {data.goalReached && (
-          <View style={styles.goalBadge}>
-            <Ionicons name="checkmark-circle" size={32} color={COLORS.successGreen} />
+    <Pressable onPress={onPress}>
+      {({ pressed }) => (
+        <BlurView
+          intensity={30}
+          tint="light"
+          style={[
+            styles.historyCard,
+            pressed && styles.historyCardPressed,
+          ]}
+        >
+          <View style={styles.historyCardHeader}>
+            <View>
+              <Text style={styles.historyDate}>{formatDate(data.date)}</Text>
+              <Text style={styles.historySteps}>
+                {data.steps.toLocaleString()} steps
+              </Text>
+            </View>
+            {data.goalReached && (
+              <View style={styles.goalBadge}>
+                <Ionicons name="checkmark-circle" size={32} color={COLORS.limeGreen} />
+              </View>
+            )}
           </View>
-        )}
-      </View>
-      <View style={styles.historyStats}>
-        <View style={styles.historyStat}>
-          <Ionicons name="walk-outline" size={16} color={COLORS.textSecondary} />
-          <Text style={styles.historyStatText}>{data.distance} mi</Text>
-        </View>
-        <View style={styles.historyStat}>
-          <Ionicons name="flame-outline" size={16} color={COLORS.textSecondary} />
-          <Text style={styles.historyStatText}>{data.calories} kcal</Text>
-        </View>
-        <View style={styles.historyStat}>
-          <Ionicons name="flag-outline" size={16} color={COLORS.textSecondary} />
-          <Text style={styles.historyStatText}>
-            {Math.round((data.steps / data.goal) * 100)}% of goal
-          </Text>
-        </View>
-      </View>
+          <View style={styles.historyStats}>
+            <View style={styles.historyStat}>
+              <Ionicons name="walk-outline" size={16} color={COLORS.textWhite} />
+              <Text style={styles.historyStatText}>{data.distance} mi</Text>
+            </View>
+            <View style={styles.historyStat}>
+              <Ionicons name="flame-outline" size={16} color={COLORS.textWhite} />
+              <Text style={styles.historyStatText}>{data.calories} kcal</Text>
+            </View>
+            <View style={styles.historyStat}>
+              <Ionicons name="flag-outline" size={16} color={COLORS.textWhite} />
+              <Text style={styles.historyStatText}>
+                {Math.round((data.steps / data.goal) * 100)}% of goal
+              </Text>
+            </View>
+          </View>
+        </BlurView>
+      )}
     </Pressable>
   );
 };
@@ -145,7 +154,13 @@ export default function History() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
+
+      {/* Gradient Background */}
+      <LinearGradient
+        colors={[COLORS.gradientTop, COLORS.gradientBottom]}
+        style={StyleSheet.absoluteFillObject}
+      />
 
       <ScrollView
         style={styles.scrollView}
@@ -155,7 +170,7 @@ export default function History() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={COLORS.primaryBlue}
+            tintColor={COLORS.textWhite}
           />
         }
       >
@@ -180,13 +195,13 @@ export default function History() {
               />
             ))
           ) : (
-            <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={48} color={COLORS.textSecondary} />
+            <BlurView intensity={30} tint="light" style={styles.emptyState}>
+              <Ionicons name="calendar-outline" size={48} color={COLORS.textWhite} />
               <Text style={styles.emptyStateText}>No activity data yet</Text>
               <Text style={styles.emptyStateSubtext}>
                 Start walking to see your history here
               </Text>
-            </View>
+            </BlurView>
           )}
         </View>
       </ScrollView>
@@ -197,7 +212,6 @@ export default function History() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   scrollView: {
     flex: 1,
@@ -213,30 +227,37 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 4,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   chartCard: {
-    backgroundColor: COLORS.cardBackground,
+    backgroundColor: COLORS.glassWhite,
     marginHorizontal: 20,
     marginBottom: 24,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: 20,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   chartTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 20,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   chartContainer: {
     flexDirection: 'row',
@@ -262,13 +283,19 @@ const styles = StyleSheet.create({
   barLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 4,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   barSteps: {
     fontSize: 10,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 2,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   historySection: {
     paddingHorizontal: 20,
@@ -276,23 +303,27 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 16,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3,
   },
   historyCard: {
-    backgroundColor: COLORS.cardBackground,
-    borderRadius: 16,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 20,
     padding: 16,
     marginBottom: 12,
-    shadowColor: COLORS.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   historyCardPressed: {
-    opacity: 0.7,
-    transform: [{ scale: 0.98 }],
+    backgroundColor: COLORS.glowNeon,
+    shadowColor: COLORS.neonBlue,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
   },
   historyCardHeader: {
     flexDirection: 'row',
@@ -303,13 +334,19 @@ const styles = StyleSheet.create({
   historyDate: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginBottom: 4,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   historySteps: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 3,
   },
   goalBadge: {
     width: 32,
@@ -322,7 +359,7 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: COLORS.glassBorder,
   },
   historyStat: {
     flexDirection: 'row',
@@ -331,21 +368,35 @@ const styles = StyleSheet.create({
   },
   historyStatText: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   emptyState: {
     alignItems: 'center',
     paddingVertical: 60,
+    backgroundColor: COLORS.glassWhite,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.glassBorder,
+    overflow: 'hidden',
   },
   emptyStateText: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: COLORS.textWhite,
     marginTop: 16,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: COLORS.textSecondary,
+    color: COLORS.textWhite,
     marginTop: 8,
+    textShadowColor: COLORS.textWhiteShadow,
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });
