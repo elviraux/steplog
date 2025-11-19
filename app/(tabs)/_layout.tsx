@@ -78,6 +78,27 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="garden"
+        options={{
+          title: 'Garden',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? 'leaf' : 'leaf-outline'}
+              color={color}
+              size={32}
+              style={
+                focused && {
+                  shadowColor: COLORS.brightWhite,
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 1.0,
+                  shadowRadius: 12,
+                }
+              }
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="history"
         options={{
           title: 'History',
