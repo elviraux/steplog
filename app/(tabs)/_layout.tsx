@@ -3,8 +3,8 @@ import { BlurView } from 'expo-blur';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const COLORS = {
-  electricPink: '#FF10F0', // Electric Pink accent
-  textWhite: '#FFFFFF',
+  brightWhite: '#FFFFFF', // Bright white for active tab
+  inactiveWhite: 'rgba(255, 255, 255, 0.6)', // Less prominent white for inactive tabs
   glassWhite: 'rgba(255, 255, 255, 0.15)',
   glassBorder: 'rgba(255, 255, 255, 0.2)',
 };
@@ -13,8 +13,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.electricPink,
-        tabBarInactiveTintColor: COLORS.textWhite,
+        tabBarActiveTintColor: COLORS.brightWhite,
+        tabBarInactiveTintColor: COLORS.inactiveWhite,
         headerShown: false,
         tabBarStyle: {
           backgroundColor: 'transparent',
@@ -67,10 +67,10 @@ export default function TabLayout() {
               size={32}
               style={
                 focused && {
-                  shadowColor: COLORS.electricPink,
+                  shadowColor: COLORS.brightWhite,
                   shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.8,
-                  shadowRadius: 8,
+                  shadowOpacity: 1.0,
+                  shadowRadius: 12,
                 }
               }
             />
@@ -88,10 +88,10 @@ export default function TabLayout() {
               size={32}
               style={
                 focused && {
-                  shadowColor: COLORS.electricPink,
+                  shadowColor: COLORS.brightWhite,
                   shadowOffset: { width: 0, height: 0 },
-                  shadowOpacity: 0.8,
-                  shadowRadius: 8,
+                  shadowOpacity: 1.0,
+                  shadowRadius: 12,
                 }
               }
             />
