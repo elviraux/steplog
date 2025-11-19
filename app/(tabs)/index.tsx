@@ -302,7 +302,7 @@ export default function Index() {
         <BlurView intensity={30} tint="light" style={styles.permissionContent}>
           <Text style={styles.permissionTitle}>Welcome to Steplog</Text>
           <Text style={styles.permissionDescription}>
-            To count your steps, we need permission to access your motion and fitness data.
+            To count your steps and track your progress, Steplog needs access to your motion and fitness activity.
           </Text>
           <Text style={styles.permissionNote}>
             Your data stays private and is only used to track your daily activity.
@@ -314,7 +314,7 @@ export default function Index() {
             ]}
             onPress={requestPermission}
           >
-            <Text style={styles.permissionButtonText}>Grant Permission</Text>
+            <Text style={styles.permissionButtonText}>Continue</Text>
           </Pressable>
         </BlurView>
       </View>
